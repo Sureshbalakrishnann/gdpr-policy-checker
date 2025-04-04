@@ -1,0 +1,13 @@
+{
+  "name": "gdpr-policy-checker",
+  "version": "1.0.0",
+  "main": "scripts/check-gdpr.js",
+  "scripts": {
+    "check-gdpr": "node scripts/check-gdpr.js"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "pdf-parse": "^1.1.1",
+    "fs": "latest"
+  }
+}

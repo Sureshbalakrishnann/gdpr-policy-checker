@@ -1,0 +1,22 @@
+name: GDPR Policy Checker
+
+on: [push, pull_request]
+
+jobs:
+  gdpr-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run GDPR Policy Check
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npm run check-gdpr
