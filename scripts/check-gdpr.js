@@ -1,11 +1,11 @@
 const fs = require("fs");
-const pdfParse = require("pdf-parse");
-const { OpenAI } = require("openai");
+const fetch = require("node-fetch");
+
+const OPENROUTER_API_KEY = "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";
+const MODEL = "openai/gpt-3.5-turbo"; // You can change this if needed
 
 async function loadGDPRText() {
-  const buffer = fs.readFileSync("gdpr-policies.pdf");
-  const data = await pdfParse(buffer);
-  return data.text;
+  return fs.readFileSync("gdpr-policy.txt", "utf-8");
 }
 
 function loadRepoCode() {
@@ -16,15 +16,30 @@ function loadRepoCode() {
     .join("\n");
 }
 
-async function validateGDPR() {
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+async function callOpenRouter(prompt) {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "https://yourproject.com", // Replace with your actual project domain if available
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
 
+  const result = await response.json();
+  return result.choices?.[0]?.message?.content || JSON.stringify(result);
+}
+
+async function validateGDPR() {
   const gdprText = await loadGDPRText();
   const code = loadRepoCode();
 
   const prompt = `
 Based on the following GDPR policy document and the code below, determine if there are any GDPR compliance violations. 
-
 If there are, list them and describe why they are non-compliant. If not, say "Compliant".
 
 --- GDPR POLICY ---
@@ -34,12 +49,7 @@ ${gdprText}
 ${code}
 `;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const output = response.choices[0].message.content;
+  const output = await callOpenRouter(prompt);
   console.log("=== GDPR Compliance Report ===\n", output);
 
   if (!output.includes("Compliant")) {

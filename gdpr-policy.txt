@@ -1,0 +1,54 @@
+
+General Data Protection Regulation (GDPR) Summary
+
+1. Lawfulness, Fairness, and Transparency
+Personal data must be processed lawfully, fairly, and in a transparent manner.
+
+2. Purpose Limitation
+Data should be collected for specified, explicit, and legitimate purposes and not further processed in a manner that is incompatible with those purposes.
+
+3. Data Minimization
+Only collect data that is necessary for the purposes for which it is processed.
+
+4. Accuracy
+Ensure personal data is accurate and kept up to date.
+
+5. Storage Limitation
+Keep personal data in a form which permits identification of data subjects for no longer than is necessary.
+
+6. Integrity and Confidentiality
+Process data in a way that ensures appropriate security, including protection against unauthorized or unlawful processing.
+
+7. Accountability
+The controller is responsible for ensuring compliance with the above principles.
+
+8. Rights of the Data Subject
+- Right to be informed
+- Right of access
+- Right to rectification
+- Right to erasure
+- Right to restrict processing
+- Right to data portability
+- Right to object
+- Rights in relation to automated decision making and profiling
+
+9. Legal Basis for Processing
+Processing is only lawful if at least one of the following applies:
+- The data subject has given consent.
+- Processing is necessary for the performance of a contract.
+- Compliance with a legal obligation.
+- To protect vital interests.
+- For tasks carried out in the public interest.
+- For the purposes of legitimate interests pursued by the controller.
+
+10. Data Protection by Design and by Default
+Implement appropriate technical and organizational measures to ensure data protection principles are integrated into processing activities.
+
+11. Data Protection Impact Assessments (DPIAs)
+Required when data processing is likely to result in a high risk to the rights and freedoms of individuals.
+
+12. Data Breach Notification
+Notify the supervisory authority within 72 hours of becoming aware of a personal data breach.
+
+13. Data Transfers
+Transfers of personal data to countries outside the EU must ensure an adequate level of protection.
