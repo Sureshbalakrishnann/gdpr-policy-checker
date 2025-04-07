@@ -3,7 +3,7 @@ const path = require("path");
 const simpleGit = require("simple-git");
 
 // ✅ OpenRouter API Key and Model
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 const MODEL = "openai/gpt-3.5-turbo";
 
 // ✅ Repo details
