@@ -8,7 +8,7 @@ const MODEL = "openai/gpt-3.5-turbo";
 
 // ✅ Repo details
 const GITHUB_REPO_URL = "https://github.com/Sureshbalakrishnann/gdpr-policy-checker.git";
-const LOCAL_REPO_PATH = "./gdpr-policy-checker-clone";
+const LOCAL_REPO_PATH = "gdpr-policy-checker-clone";
 
 // ✅ Clone or pull latest code from main branch
 async function cloneOrUpdateRepo() {
