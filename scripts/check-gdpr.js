@@ -122,7 +122,7 @@ async function validateBothPolicies() {
       "Europe (GDPR)"
     ),
     validatePolicyFromURL(
-      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/privacy-us.txt",
+      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/gdpr-europe - us.txt",
       "US Privacy"
     )
   ]);
