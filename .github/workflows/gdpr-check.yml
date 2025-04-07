@@ -1,31 +1,23 @@
-name: GDPR Compliance Check
+name: GDPR Policy Checker
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push, pull_request]
 
 jobs:
-  gdpr-check:
+  gdpr:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 🟢 Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: 📦 Install dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm install simple-git
 
-      - name: 🔐 Inject environment variables
-        run: |
-          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env
-          echo "LOCAL_REPO_PATH=." >> .env
-
-      - name: ✅ Run GDPR compliance check
+      - name: Run GDPR Compliance Check
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: node scripts/check-gdpr.js
