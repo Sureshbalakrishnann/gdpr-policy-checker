@@ -2,29 +2,31 @@ const fs = require("fs");
 const path = require("path");
 const simpleGit = require("simple-git");
 
-// ✅ Native fetch in Node 18+ (no need to import anything)
-
-const OPENROUTER_API_KEY = "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"; // 🔒 Replace with your OpenRouter API key
+// ✅ OpenRouter API Key and Model
+const OPENROUTER_API_KEY = "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";
 const MODEL = "openai/gpt-3.5-turbo";
-const GITHUB_REPO_URL = "https://github.com/Sureshbalakrishnann/gdpr-policy-checker.git";
-const LOCAL_REPO_PATH = "./gdpr-policy-checker-clone";
 
+// ✅ Repo details
+const GITHUB_REPO_URL = "https://github.com/Sureshbalakrishnann/gdpr-policy-checker.git";
+const LOCAL_REPO_PATH = "gdpr-policy-checker-clone";
+
+// ✅ Clone or pull latest code from main branch
 async function cloneOrUpdateRepo() {
+  const git = simpleGit();
+
   if (fs.existsSync(LOCAL_REPO_PATH)) {
     console.log("📥 Pulling latest changes...");
-    const git = simpleGit(LOCAL_REPO_PATH);
-    await git.pull();
+    const repo = simpleGit(LOCAL_REPO_PATH);
+    await repo.fetch();
+    await repo.checkout("gdpr-fix-branch");
+    await repo.pull("origin", "gdpr-fix-branch");
   } else {
     console.log("📦 Cloning repo...");
-    await simpleGit().clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
+    await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH, ["--branch=gdpr-fix-branch"]);
   }
 }
 
-function loadGDPRText() {
-  const gdprPath = path.join(LOCAL_REPO_PATH, "gdpr-policy.txt");
-  return fs.readFileSync(gdprPath, "utf-8");
-}
-
+// ✅ Recursively load source code files
 function loadRepoCode() {
   const targetFolder = path.join(LOCAL_REPO_PATH, "gdpr-frontend");
 
@@ -47,13 +49,14 @@ function loadRepoCode() {
   return readAllFiles(targetFolder);
 }
 
+// ✅ Call OpenRouter API with prompt
 async function callOpenRouter(prompt) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://yourproject.com",
+      "HTTP-Referer": "https://yourproject.com", // Optional
     },
     body: JSON.stringify({
       model: MODEL,
@@ -70,32 +73,65 @@ async function callOpenRouter(prompt) {
   return result.choices?.[0]?.message?.content || "No response content.";
 }
 
-async function validateGDPR() {
-  await cloneOrUpdateRepo();
+// ✅ Load policy and compare with code
+async function validatePolicyFromURL(policyURL, regionLabel) {
+  const policyResponse = await fetch(policyURL);
+  if (!policyResponse.ok) {
+    throw new Error(`Failed to fetch ${regionLabel} policy: ${policyResponse.statusText}`);
+  }
 
-  const gdprText = loadGDPRText();
+  const policyText = await policyResponse.text();
   const code = loadRepoCode();
 
   const prompt = `
-Based on the following GDPR policy document and the frontend code below, determine if there are any GDPR compliance violations.
-If there are, list them and describe why they are non-compliant. If not, say "Compliant".
+Based on the following ${regionLabel} policy and the frontend code, determine if there are any ${regionLabel} compliance violations.
+If there are, list them and describe why they are non-compliant.
+If everything is compliant, reply with exactly: "Compliant" (without quotes and no other text).
 
---- GDPR POLICY ---
-${gdprText}
+--- ${regionLabel.toUpperCase()} POLICY ---
+${policyText}
 
 --- CODE ---
 ${code}
 `;
 
   const output = await callOpenRouter(prompt);
-  console.log("=== GDPR Compliance Report ===\n", output);
+  console.log(`\n=== ${regionLabel} Compliance Report ===\n`, output);
 
-  if (!output.toLowerCase().includes("compliant")) {
-    console.error("❌ GDPR violations found. Aborting process.");
-    process.exit(1);
+  const cleaned = output.trim().toLowerCase();
+  const passed = cleaned === "compliant";
+
+  if (passed) {
+    console.log(`✅ ${regionLabel} policy compliance passed.`);
+    return true;
   } else {
-    console.log("✅ No GDPR violations found.");
+    console.error(`❌ ${regionLabel} compliance violations found.`);
+    return false;
   }
 }
 
-validateGDPR();
+// ✅ Validate both policies
+async function validateBothPolicies() {
+  await cloneOrUpdateRepo();
+
+  const results = await Promise.all([
+    validatePolicyFromURL(
+      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/gdpr-europe.txt",
+      "Europe (GDPR)"
+    ),
+    validatePolicyFromURL(
+      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/gdpr-us.txt",
+      "US Privacy"
+    ),
+  ]);
+
+  if (results.includes(false)) {
+    console.error("\n🚫 One or more policies failed. Stopping pipeline.");
+    process.exit(1); // ❌ Fail CI
+  }
+
+  console.log("\n🎉 All policies passed. You're good to go!");
+}
+
+validateBothPolicies();
+ 
