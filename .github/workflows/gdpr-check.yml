@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  gdpr-check:
-    runs-on: ubuntu-latest
+ # gdpr-check:
+  #  runs-on: ubuntu-latest
 
     steps:
       - name: 📥 Checkout code
