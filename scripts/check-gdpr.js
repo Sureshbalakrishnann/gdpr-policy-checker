@@ -21,7 +21,7 @@ async function cloneOrUpdateRepo() {
     // Checkout a known branch (like main) before pulling
     await repo.checkout("main");
     await repo.pull("origin", "main");
-  } else {
+  } else {  
     console.log("📦 Cloning repo...");
     await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
     
