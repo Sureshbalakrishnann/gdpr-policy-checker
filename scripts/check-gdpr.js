@@ -2,15 +2,15 @@ const fs = require("fs");
 const path = require("path");
 const simpleGit = require("simple-git");
 
-// ✅ Native fetch (Node 18+)
+// ✅ OpenRouter API Key and Model
 const OPENROUTER_API_KEY = "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";
 const MODEL = "openai/gpt-3.5-turbo";
 
-// 👇 Change this to your repo
+// ✅ Repo details
 const GITHUB_REPO_URL = "https://github.com/Sureshbalakrishnann/gdpr-policy-checker.git";
 const LOCAL_REPO_PATH = "./gdpr-policy-checker-clone";
 
-// ✅ Git clone only for code (policies will be fetched via URL)
+// ✅ Clone or pull latest code from main branch
 async function cloneOrUpdateRepo() {
   const git = simpleGit();
 
@@ -18,21 +18,18 @@ async function cloneOrUpdateRepo() {
     console.log("📥 Pulling latest changes...");
     const repo = simpleGit(LOCAL_REPO_PATH);
 
-    // Checkout a known branch (like main) before pulling
     await repo.checkout("main");
     await repo.pull("origin", "main");
-  } else {  
+  } else {
     console.log("📦 Cloning repo...");
     await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
-    
-    // Checkout the main branch explicitly after clone
+
     const repo = simpleGit(LOCAL_REPO_PATH);
     await repo.checkout("main");
   }
 }
 
-
-// ✅ Load all .js/.ts/.html/.css files recursively
+// ✅ Recursively load source code files
 function loadRepoCode() {
   const targetFolder = path.join(LOCAL_REPO_PATH, "gdpr-frontend");
 
@@ -79,7 +76,7 @@ async function callOpenRouter(prompt) {
   return result.choices?.[0]?.message?.content || "No response content.";
 }
 
-// ✅ Fetch and validate from GitHub raw URL
+// ✅ Load policy and compare with code
 async function validatePolicyFromURL(policyURL, regionLabel) {
   const policyResponse = await fetch(policyURL);
   if (!policyResponse.ok) {
@@ -112,7 +109,7 @@ ${code}
   return true;
 }
 
-// ✅ Run both checks
+// ✅ Validate both policies
 async function validateBothPolicies() {
   await cloneOrUpdateRepo();
 
@@ -124,7 +121,7 @@ async function validateBothPolicies() {
     validatePolicyFromURL(
       "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/gdpr-us.txt",
       "US Privacy"
-    )
+    ),
   ]);
 
   if (results.includes(false)) {
