@@ -18,14 +18,14 @@ async function cloneOrUpdateRepo() {
     console.log("📥 Pulling latest changes...");
     const repo = simpleGit(LOCAL_REPO_PATH);
 
-    await repo.checkout("main");
-    await repo.pull("origin", "main");
+    await repo.checkout("gdpr-fix-branch");
+    await repo.pull("origin", "magdpr-fix-branchin");
   } else {
     console.log("📦 Cloning repo...");
     await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
 
     const repo = simpleGit(LOCAL_REPO_PATH);
-    await repo.checkout("main");
+    await repo.checkout("gdpr-fix-branch");
   }
 }
 
