@@ -19,15 +19,15 @@ async function cloneOrUpdateRepo() {
     const repo = simpleGit(LOCAL_REPO_PATH);
 
     // Checkout a known branch (like main) before pulling
-    await repo.checkout("main");
-    await repo.pull("origin", "main");
+    await repo.checkout("gdpr-fix-branch");
+    await repo.pull("origin", "gdpr-fix-branch");
   } else {  
     console.log("📦 Cloning repo...");
     await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
     
     // Checkout the main branch explicitly after clone
     const repo = simpleGit(LOCAL_REPO_PATH);
-    await repo.checkout("main");
+    await repo.checkout("gdpr-fix-branch");
   }
 }
 
