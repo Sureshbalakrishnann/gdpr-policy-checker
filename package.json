@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "scripts/check-gdpr.js",
   "scripts": {
-    "check-gdpr": "node scripts/check-gdpr.js",
+    "check-gdpr": "node scripts/check-gdpr.js"
   },
   "dependencies": {
     "chalk": "^5.4.1",
