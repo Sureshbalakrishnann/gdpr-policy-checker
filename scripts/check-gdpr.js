@@ -3,7 +3,7 @@ const path = require("path");
 const simpleGit = require("simple-git");
 
 // ✅ OpenRouter API Key and Model
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 const MODEL = "openai/gpt-3.5-turbo";
 
 // ✅ Repo details
@@ -17,15 +17,12 @@ async function cloneOrUpdateRepo() {
   if (fs.existsSync(LOCAL_REPO_PATH)) {
     console.log("📥 Pulling latest changes...");
     const repo = simpleGit(LOCAL_REPO_PATH);
-
+    await repo.fetch();
     await repo.checkout("gdpr-fix-branch");
     await repo.pull("origin", "gdpr-fix-branch");
   } else {
     console.log("📦 Cloning repo...");
-    await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
-
-    const repo = simpleGit(LOCAL_REPO_PATH);
-    await repo.checkout("gdpr-fix-branch");
+    await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH, ["--branch=gdpr-fix-branch"]);
   }
 }
 
@@ -88,7 +85,8 @@ async function validatePolicyFromURL(policyURL, regionLabel) {
 
   const prompt = `
 Based on the following ${regionLabel} policy and the frontend code, determine if there are any ${regionLabel} compliance violations.
-If there are, list them and describe why they are non-compliant. If not, say "Compliant".
+If there are, list them and describe why they are non-compliant.
+If everything is compliant, reply with exactly: "Compliant" (without quotes and no other text).
 
 --- ${regionLabel.toUpperCase()} POLICY ---
 ${policyText}
@@ -100,13 +98,16 @@ ${code}
   const output = await callOpenRouter(prompt);
   console.log(`\n=== ${regionLabel} Compliance Report ===\n`, output);
 
-  if (!output.toLowerCase().includes("compliant")) {
+  const cleaned = output.trim().toLowerCase();
+  const passed = cleaned === "compliant";
+
+  if (passed) {
+    console.log(`✅ ${regionLabel} policy compliance passed.`);
+    return true;
+  } else {
     console.error(`❌ ${regionLabel} compliance violations found.`);
     return false;
   }
-
-  console.log(`✅ ${regionLabel} policy compliance passed.`);
-  return true;
 }
 
 // ✅ Validate both policies
