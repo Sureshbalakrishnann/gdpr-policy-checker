@@ -19,7 +19,7 @@ async function cloneOrUpdateRepo() {
     const repo = simpleGit(LOCAL_REPO_PATH);
 
     await repo.checkout("gdpr-fix-branch");
-    await repo.pull("origin", "gdpr-fix-branchin");
+    await repo.pull("origin", "gdpr-fix-branch");
   } else {
     console.log("📦 Cloning repo...");
     await git.clone(GITHUB_REPO_URL, LOCAL_REPO_PATH);
