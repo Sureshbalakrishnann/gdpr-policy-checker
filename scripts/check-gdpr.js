@@ -108,11 +108,11 @@ async function validateBothPolicies() {
 
   const results = await Promise.all([
     validatePolicyFromURL(
-      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/main/policies/gdpr-europe.txt",
+      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/gdpr-europe.txt",
       "Europe (GDPR)"
     ),
     validatePolicyFromURL(
-      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/main/policies/privacy-us.txt",
+      "https://raw.githubusercontent.com/Sureshbalakrishnann/gdpr-policy-checker/gdpr-fix-branch/policies/privacy-us.txt",
       "US Privacy"
     )
   ]);
